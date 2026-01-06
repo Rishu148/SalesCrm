@@ -8,7 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Contacts from "./pages/Contacts";
 import Pipeline from "./pages/pipeline";
 // import Revenue from "./pages/Revenue";
-import Tasks from "./pages/Tasks";
+// import Tasks from "./pages/Tasks";
 // import Settings from "./pages/Settings";
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/pipeline" element={<Pipeline />} />
         {/* <Route path="/revenue" element={<Revenue />} /> */}
-        <Route path="/tasks" element={<Tasks />} />
+        {/* <Route path="/tasks" element={<Tasks />} /> */}
         {/* <Route path="/settings" element={<Settings />} /> */}
       </Route>
     </Routes>
