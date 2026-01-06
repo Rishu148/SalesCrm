@@ -50,6 +50,7 @@ app.use(cors({
 
 app.use("/api/deals", require("./routes/dealRoutes"));
 
+app.use("/api/taskManagement", require("./routes/taskManagementRoutes"));
 
 app.use("/api/auth", require("./routes/authRoutes"));
 
