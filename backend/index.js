@@ -30,7 +30,7 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
 
@@ -39,29 +39,27 @@ app.get("/check", (req, res) => {
   res.send("API working");
 });
 
-app.use("/api/tasks", require("./routes/taskRoutes"));
 
 
 
 app.use(cookieParser());
 
 app.use(cors({
-  origin: "http://localhost:5173", // frontend
-  credentials: true,               // IMPORTANT
+  origin: "http://localhost:5173",
+  credentials: true,               
 })
 );
 
 
-// app.use(cors({
-//   origin: "http://localhost:5173"
-// }));
 
 
 
 
-app.use("/api/deals", require("./routes/dealRoutes"));
+// server.js ke andar
+const leadRoutes = require("./routes/leadRoutes");
+app.use("/api/leads", leadRoutes);
 
-app.use("/api/taskManagement", require("./routes/taskManagementRoutes"));
+
 
 app.use("/api/auth", require("./routes/authRoutes"));
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 import {
   User,
@@ -32,6 +33,8 @@ function Register() {
     });
   };
 
+  const navigate = useNavigate();
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -51,25 +54,23 @@ const handleSubmit = async (e) => {
   }
 
   try {
-    const res = await axios.post(
+    await axios.post(
       "http://localhost:8080/api/auth/register",
       {
         name: formData.name,
         email: formData.email,
         password: formData.password,
-      }
+      },
+      { withCredentials: true }
     );
 
-    alert("Registration Successful");
-    console.log(res.data);
-
-    // redirect to login
-    window.location.href = "/login";
+    navigate("/login");
 
   } catch (error) {
     alert(error.response?.data?.message || "Register failed");
   }
 };
+
 
 
   return (
