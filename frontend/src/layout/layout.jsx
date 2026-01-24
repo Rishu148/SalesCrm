@@ -1,20 +1,41 @@
 import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../context/authContext"; // Path check kar lena
+import { useAuth } from "../context/authContext";
 
 function AppLayout() {
   const { user } = useAuth();
 
   return (
-    <div className="flex h-screen bg-[#0B1220] text-white font-sans">
-      {/* MAGIC FIX: key={user?.role} 
-        Jab role change hoga, React sidebar ko destroy karke recreate karega.
-        Refresh karne ki zaroorat nahi padegi.
-      */}
+    // ✨ Full Screen Container
+    <div className="flex h-screen bg-[#030303] text-white font-sans overflow-hidden selection:bg-indigo-500/30">
+      
+      {/* Custom Scrollbar Styles (Isse scrollbar patla aur dark ho jayega) */}
+      <style>{`
+        ::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #030303; 
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #262626; 
+          border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #404040; 
+        }
+      `}</style>
+
+      {/* Sidebar Key ensure karta hai ki role change hone par refresh ho */}
       <Sidebar key={user?.role || "guest"} />
       
-      <main className="flex-1 overflow-y-auto bg-[#0B1220]">
-        <div className="p-4 md:p-8 max-w-7xl mx-auto">
+      {/* 🛑 FIX: Maine yahan se padding (p-4/p-8) hata di hai.
+         Ab Header sticky hokar top par chipkega.
+         Content ke liye padding ab individual pages me handle hogi.
+      */}
+      <main className="flex-1 overflow-y-auto bg-[#030303] relative scroll-smooth">
+        <div className="w-full min-h-full">
           <Outlet />
         </div>
       </main>
