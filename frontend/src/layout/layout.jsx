@@ -1,6 +1,7 @@
 import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../context/authContext";
+import CommandDesk from "../pages/CommandDesk"; 
 
 function AppLayout() {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ function AppLayout() {
         }
       `}</style>
 
+        <CommandDesk />
       {/* Sidebar Key ensure karta hai ki role change hone par refresh ho */}
       <Sidebar key={user?.role || "guest"} />
       

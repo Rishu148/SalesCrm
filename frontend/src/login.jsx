@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { useAuth } from "./context/authContext"; 
+import { useAuth } from "./context/authContext";
 import {
   Mail,
   Lock,
@@ -16,7 +16,9 @@ import {
   Shield
 } from "lucide-react";
 
-// Keep your existing logic intact
+// 👇 1. LOADER IMPORT (Path check kar lena)
+import LoadingScreen from "./pages/LoadingScreen"; 
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 function Login() {
@@ -27,6 +29,10 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   
+  // 👇 2. NAYI STATE ANIMATION KE LIYE
+  const [showBootLoader, setShowBootLoader] = useState(false);
+  const [targetRole, setTargetRole] = useState(""); // Role store karne ke liye
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -37,9 +43,11 @@ function Login() {
     if (error) setError("");
   };
 
+  // 👇 3. LOGIC UPDATE: Navigate ki jagah Loader chalao
   const handleLoginSuccess = (role) => {
-    if (role === "admin") navigate("/dashboard");
-    else navigate("/home");
+    setTargetRole(role);       // Role save kiya
+    setIsLoading(false);       // Button loader band
+    setShowBootLoader(true);   // Cyber Loader shuru
   };
 
   const handleSubmit = async (e) => {
@@ -53,12 +61,11 @@ function Login() {
     try {
       const res = await axios.post(`${API_URL}/auth/login`, formData, { withCredentials: true });
       if (res.data.user) loginAction(res.data.user); 
-      handleLoginSuccess(res.data.user.role);
+      handleLoginSuccess(res.data.user.role); // Updated function call karega
     } catch (err) {
       setError(err.response?.data?.message || "Invalid credentials.");
-    } finally {
-      setIsLoading(false);
-    }
+      setIsLoading(false); // Error aaye to loader band
+    } 
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
@@ -66,14 +73,28 @@ function Login() {
     setError("");
     try {
         const res = await axios.post(`${API_URL}/auth/google`, { token: credentialResponse.credential }, { withCredentials: true });
+        if (res.data.user) loginAction(res.data.user); // Context update zaroori hai
         handleLoginSuccess(res.data.user.role);
     } catch (err) {
         setError("Google authentication failed.");
-    } finally {
         setIsLoading(false);
-    }
+    } 
   };
 
+  // 👇 4. AGAR BOOT LOADER TRUE HAI, TOH PURI SCREEN PE ANIMATION DIKHAO
+  if (showBootLoader) {
+    return (
+      <LoadingScreen 
+        onComplete={() => {
+          // 👇 5. Jab Animation khatam ho, tabhi Navigate karo
+          if (targetRole === "admin") navigate("/dashboard");
+          else navigate("/home");
+        }} 
+      />
+    );
+  }
+
+  // --- BAAKI TERA CODE SAME TO SAME ---
   return (
     <div className="min-h-screen bg-[#030303] text-white font-sans selection:bg-indigo-500/30 flex w-full">
       
@@ -212,8 +233,6 @@ function Login() {
                     <h4 className="font-bold text-white text-sm">Real-time Analytics</h4>
                     <p className="text-xs text-slate-500 mt-1">Data driven decisions</p>
                 </div>
-
-                
             </div>
         </div>
       </div>

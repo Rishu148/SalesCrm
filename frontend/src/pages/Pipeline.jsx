@@ -47,6 +47,8 @@ const Toast = ({ message, type, onClose }) => {
 function Pipeline() {
   const { user } = useAuth();
   const [leads, setLeads] = useState([]);
+    const [loading, setLoading] = useState(true);
+
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); 
   const [searchTerm, setSearchTerm] = useState("");
@@ -74,6 +76,7 @@ function Pipeline() {
       const res = await api.get("/leads");
       setLeads(res.data);
     } catch (error) { console.error("Error fetching pipeline"); }
+    finally { setLoading(false); }
   };
 
   useEffect(() => { fetchLeads(); }, []);
@@ -168,6 +171,8 @@ function Pipeline() {
         else return l.status === stage && !isUnassigned;
     })
   }));
+
+  if (loading) return <PipelineSkeleton />;
 
   return (
     // ✨ Base: Solid Black + Smooth Scroll + Spotlights
@@ -544,5 +549,91 @@ const ActionButton = ({ icon, label, href, color }) => {
     const colors = { blue: "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/20", purple: "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border-purple-500/20", green: "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20" };
     return <a href={href} target="_blank" rel="noreferrer" className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl border transition-all active:scale-[0.98] hover:-translate-y-0.5 font-bold text-xs cursor-pointer ${colors[color]}`}>{icon}<span className="tracking-wide hidden sm:inline">{label}</span></a>;
 };
+
+
+const PipelineSkeleton = () => (
+  <div className="flex flex-col h-screen bg-[#020202] overflow-hidden relative font-mono">
+    
+    {/* 1. MATRIX BACKGROUND (Background Texture) */}
+    <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+
+    {/* 2. SCANNER LIGHT (Upar se niche jane wali light) */}
+    <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.8)] animate-[scanline_2.5s_linear_infinite] z-50"></div>
+    <style>{`@keyframes scanline { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }`}</style>
+
+    {/* --- HEADER SKELETON --- */}
+    <div className="px-8 py-5 flex-none border-b border-cyan-900/30 bg-[#020202]/90 backdrop-blur-xl z-20 relative">
+       <div className="flex flex-col xl:flex-row justify-between items-center gap-6">
+          <div className="space-y-2">
+             {/* Title with Neon Bar */}
+             <div className="h-8 w-48 bg-cyan-900/20 border-l-4 border-cyan-500 rounded-r"></div>
+             <div className="h-3 w-32 bg-cyan-900/10 rounded"></div>
+          </div>
+          <div className="flex gap-4 w-full xl:w-auto">
+             <div className="h-12 w-full xl:w-80 bg-cyan-900/10 border border-cyan-500/20 rounded-xl"></div>
+             <div className="h-12 w-32 bg-cyan-500/20 border border-cyan-500/30 rounded-xl"></div>
+          </div>
+       </div>
+    </div>
+
+    {/* --- KANBAN BOARD AREA --- */}
+    <div className="flex-1 overflow-x-auto overflow-y-hidden p-8 z-10">
+       <div className="flex gap-6 h-full min-w-max pb-4">
+          
+          {/* 5 Columns Loop */}
+          {[1, 2, 3, 4, 5].map((colIndex) => (
+             <div 
+               key={colIndex} 
+               className="min-w-[320px] w-[320px] flex flex-col h-full rounded-3xl bg-[#050505] border border-cyan-800/30 shadow-xl relative overflow-hidden"
+             >
+                {/* Column Header */}
+                <div className="p-4 border-b border-cyan-900/30 flex justify-between items-center bg-cyan-900/5">
+                   <div className="flex items-center gap-3">
+                      <div className="h-4 w-24 bg-cyan-900/30 rounded"></div>
+                      <div className="h-5 w-8 bg-cyan-900/20 rounded border border-cyan-500/10"></div>
+                   </div>
+                   <div className="h-4 w-4 bg-cyan-900/20 rounded"></div>
+                </div>
+
+                {/* Cards Area */}
+                <div className="p-3 space-y-3 overflow-y-hidden flex-1">
+                   {[1, 2, 3].map((cardIndex) => (
+                      <div 
+                        key={cardIndex} 
+                        className="rounded-2xl p-4 bg-[#0A0A0C] border border-cyan-900/20 relative overflow-hidden group"
+                        style={{ opacity: 1 - (cardIndex * 0.15) }} // Thoda fade effect neeche ke cards ke liye
+                      >
+                         {/* Card Header Line */}
+                         <div className="flex gap-2 mb-3">
+                            <div className="h-4 w-16 bg-cyan-900/20 rounded border border-cyan-500/10"></div>
+                         </div>
+                         
+                         {/* Card Title Box */}
+                         <div className="h-5 w-3/4 bg-cyan-900/30 rounded mb-3 border-l-2 border-cyan-500/50"></div>
+
+                         {/* Details Lines */}
+                         <div className="space-y-2 mb-4">
+                            <div className="h-3 w-1/2 bg-cyan-900/10 rounded"></div>
+                            <div className="h-3 w-2/3 bg-cyan-900/10 rounded"></div>
+                         </div>
+
+                         {/* Footer Icons */}
+                         <div className="pt-3 border-t border-cyan-900/20 flex justify-between items-center">
+                            <div className="h-3 w-16 bg-cyan-900/20 rounded"></div>
+                            <div className="h-6 w-6 rounded-full bg-cyan-900/20"></div>
+                         </div>
+
+                         {/* ✨ GLITCH SHIMMER (Left to Right Scan inside card) */}
+                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" style={{animationDelay: `${colIndex * 0.2}s`}}></div>
+                      </div>
+                   ))}
+                </div>
+             </div>
+          ))}
+
+       </div>
+    </div>
+  </div>
+);
 
 export default Pipeline;

@@ -1,19 +1,27 @@
 import { useState, useEffect } from "react";
 import api from "../api/axios";
 import { useAuth } from "../context/authContext";
+import {useLocation} from "react-router-dom";
 import { 
   User, Shield, Trophy, Users, Save, LogOut, 
   LayoutGrid, CheckCircle, Lock, Plus, Trash2,
   Briefcase, Star, Medal, Crown, Zap, Loader2, AlertCircle, 
-  Target, Award, TrendingUp,AlertTriangle, X
+  Target, Award, TrendingUp, AlertTriangle, X
 } from "lucide-react";
 
 export default function Settings() {
   const { user, logout } = useAuth();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("profile");
   const [toast, setToast] = useState(null);
 
   const isAdmin = user?.role === 'admin';
+
+  useEffect(() => {
+    if (location.state && location.state.activeTab) {
+        setActiveTab(location.state.activeTab);
+    }
+  }, [location]);
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -21,13 +29,12 @@ export default function Settings() {
   };
 
   return (
-    
-    <div className="min-h-screen bg-[#030303] text-slate-300 font-sans selection:bg-indigo-500/30 relative ">
+    // ✨ 1. PAGE ANIMATION: Smooth Zoom-In Effect
+    <div className="min-h-screen bg-[#030303] text-slate-300 font-sans selection:bg-indigo-500/30 relative animate-in fade-in zoom-in-95 duration-500">
       
-     
+      {/* Background Ambience */}
       <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-indigo-900/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-900/5 rounded-full blur-[120px] pointer-events-none"></div>
-      
       
       {toast && (
         <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-4 fade-in duration-300 border backdrop-blur-md ${toast.type === 'error' ? 'bg-red-500/10 border-red-500/50 text-red-400' : 'bg-[#0A0A0C]/90 border-emerald-500/50 text-emerald-400'}`}>
@@ -71,8 +78,8 @@ export default function Settings() {
             {isAdmin && <TabButton active={activeTab} name="team" label="Team" icon={<Users size={16}/>} setTab={setActiveTab} />}
         </div>
 
-        {/* CONTENT AREA */}
-        <div key={activeTab} className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
+        {/* CONTENT AREA (Tab Switch Animation) */}
+        <div key={activeTab} className="animate-in fade-in slide-in-from-right-4 duration-500 ease-out">
             {activeTab === 'profile' && <ProfileSettings user={user} showToast={showToast} />}
             
             {activeTab === 'achievements' && (
@@ -124,109 +131,134 @@ function AdminLeaderboard() {
         fetchData();
     }, []);
 
-    if(loading) return <div className="p-20 text-center text-slate-500 flex flex-col items-center animate-pulse"><Loader2 className="animate-spin mb-4 text-indigo-500" size={32}/> Crunching Numbers...</div>;
+    // ✨ 2. CYBER LOADING STATE (Admin View)
+    if(loading) return (
+        <div className="flex flex-col h-[calc(100vh-240px)] relative overflow-hidden font-mono">
+             {/* Matrix Background */}
+             <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+             {/* Scanner Light */}
+             <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.8)] animate-[scanline_2.5s_linear_infinite] z-50"></div>
+             <style>{`@keyframes scanline { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }`}</style>
+
+             <div className="grid grid-cols-3 gap-4 mb-4 shrink-0 relative z-10">
+                 {[1,2,3].map(i => <div key={i} className="h-24 bg-[#0A0A0C] border border-cyan-900/30 rounded-2xl animate-pulse"></div>)}
+             </div>
+
+             <div className="flex-1 grid grid-cols-12 gap-4 min-h-0 relative z-10">
+                 {/* Podium Skeleton */}
+                 <div className="col-span-8 bg-[#0A0A0C] border border-cyan-900/30 rounded-3xl relative flex items-end justify-center pb-8 gap-6 overflow-hidden shadow-2xl">
+                     <div className="w-20 h-32 bg-cyan-900/10 rounded-t-lg animate-pulse delay-100"></div>
+                     <div className="w-24 h-48 bg-cyan-900/20 rounded-t-lg animate-pulse border-t-4 border-cyan-500/50"></div>
+                     <div className="w-20 h-24 bg-cyan-900/10 rounded-t-lg animate-pulse delay-200"></div>
+                 </div>
+                 {/* List Skeleton */}
+                 <div className="col-span-4 bg-[#0A0A0C] border border-cyan-900/30 rounded-3xl p-5 space-y-3">
+                     {[1,2,3,4,5,6].map(i => (
+                         <div key={i} className="h-12 w-full bg-cyan-900/10 rounded-xl animate-pulse border border-cyan-500/10"></div>
+                     ))}
+                 </div>
+             </div>
+        </div>
+    );
 
     const top3 = leaderboard.slice(0, 3);
     const rest = leaderboard.slice(3);
 
-   // 👇 Sirf AdminLeaderboard function ka return replace karo:
+    return (
+        <div className="flex flex-col h-[calc(100vh-240px)]"> 
+            {/* 1. Top Stats */}
+            <div className="grid grid-cols-3 gap-4 mb-4 shrink-0">
+                <StatCard icon={<Briefcase size={18}/>} label="Total Wins" value={stats.totalDeals} color="emerald" />
+                <StatCard icon={<Users size={18}/>} label="Active Agents" value={stats.activeAgents} color="blue" />
+                <StatCard icon={<Target size={18}/>} label="Top Performance" value={leaderboard[0]?.wins || 0} color="yellow" />
+            </div>
 
-return (
-    <div className="flex flex-col h-[calc(100vh-240px)]"> {/* ⚡ Fixed Height Calculation */}
-        
-        {/* 1. Top Stats (Compact) */}
-        <div className="grid grid-cols-3 gap-4 mb-4 shrink-0">
-            <StatCard icon={<Briefcase size={18}/>} label="Total Wins" value={stats.totalDeals} color="emerald" />
-            <StatCard icon={<Users size={18}/>} label="Active Agents" value={stats.activeAgents} color="blue" />
-            <StatCard icon={<Target size={18}/>} label="Top Performance" value={leaderboard[0]?.wins || 0} color="yellow" />
-        </div>
-
-        {/* 2. Main Split View (Podium Left | List Right) */}
-        <div className="flex-1 grid grid-cols-12 gap-4 min-h-0">
-            
-            {/* 🏆 LEFT: Podium (Takes 70% width) */}
-            <div className="col-span-8 bg-[#0A0A0C] border border-white/5 rounded-3xl relative flex flex-col justify-end pb-8 overflow-hidden shadow-2xl">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none"></div>
+            {/* 2. Main Split View */}
+            <div className="flex-1 grid grid-cols-12 gap-4 min-h-0">
                 
-                <div className="absolute top-6 left-0 right-0 text-center">
-                    <h3 className="text-sm font-bold text-white uppercase tracking-widest flex items-center justify-center gap-2">
-                        <Crown size={18} className="text-yellow-400"/> Top Performers
-                    </h3>
-                </div>
-
-                {leaderboard.length > 0 ? (
-                    <div className="flex flex-wrap justify-center items-end gap-8 px-6 mb-4">
-                        {/* 🥈 Rank 2 */}
-                        {top3[1] && (
-                            <div className="flex flex-col items-center animate-in slide-in-from-bottom-12 duration-700 delay-100">
-                                <div className="w-16 h-16 rounded-full border-4 border-slate-400 bg-[#0F0F12] flex items-center justify-center text-xl font-bold text-white mb-3 relative shadow-[0_0_20px_rgba(148,163,184,0.3)]">
-                                    {top3[1].name.charAt(0)}
-                                    <div className="absolute -bottom-2.5 bg-slate-400 text-black text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#0A0A0C]">#2</div>
-                                </div>
-                                <div className="h-24 w-20 bg-gradient-to-t from-slate-400/20 to-transparent border-t-2 border-slate-400 rounded-t-lg flex flex-col items-center justify-start pt-3">
-                                    <span className="font-bold text-white text-xs">{top3[1].name}</span>
-                                    <span className="text-[10px] text-slate-400 font-mono">{top3[1].wins} Wins</span>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 🥇 Rank 1 */}
-                        {top3[0] && (
-                            <div className="flex flex-col items-center z-10 animate-in slide-in-from-bottom-12 duration-700">
-                                <Crown size={32} className="text-yellow-400 mb-2 fill-yellow-400 animate-bounce" />
-                                <div className="w-24 h-24 rounded-full border-4 border-yellow-400 bg-[#0F0F12] flex items-center justify-center text-3xl font-bold text-white mb-3 relative shadow-[0_0_30px_rgba(250,204,21,0.4)]">
-                                    {top3[0].name.charAt(0)}
-                                    <div className="absolute -bottom-3 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-[#0A0A0C]">#1</div>
-                                </div>
-                                <div className="h-36 w-28 bg-gradient-to-t from-yellow-400/20 to-transparent border-t-2 border-yellow-400 rounded-t-lg flex flex-col items-center justify-start pt-5 shadow-[0_0_20px_rgba(250,204,21,0.1)]">
-                                    <span className="font-bold text-white text-sm">{top3[0].name}</span>
-                                    <span className="text-xs text-yellow-200 font-mono font-bold">{top3[0].wins} Wins</span>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 🥉 Rank 3 */}
-                        {top3[2] && (
-                            <div className="flex flex-col items-center animate-in slide-in-from-bottom-12 duration-700 delay-200">
-                                <div className="w-16 h-16 rounded-full border-4 border-amber-600 bg-[#0F0F12] flex items-center justify-center text-xl font-bold text-white mb-3 relative shadow-[0_0_20px_rgba(217,119,6,0.3)]">
-                                    {top3[2].name.charAt(0)}
-                                    <div className="absolute -bottom-2.5 bg-amber-600 text-black text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#0A0A0C]">#3</div>
-                                </div>
-                                <div className="h-16 w-20 bg-gradient-to-t from-amber-600/20 to-transparent border-t-2 border-amber-600 rounded-t-lg flex flex-col items-center justify-start pt-3">
-                                    <span className="font-bold text-white text-xs">{top3[2].name}</span>
-                                    <span className="text-[10px] text-slate-400 font-mono">{top3[2].wins} Wins</span>
-                                </div>
-                            </div>
-                        )}
+                {/* 🏆 LEFT: Podium */}
+                <div className="col-span-8 bg-[#0A0A0C] border border-white/5 rounded-3xl relative flex flex-col justify-end pb-8 overflow-hidden shadow-2xl">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none"></div>
+                    
+                    <div className="absolute top-6 left-0 right-0 text-center">
+                        <h3 className="text-sm font-bold text-white uppercase tracking-widest flex items-center justify-center gap-2">
+                            <Crown size={18} className="text-yellow-400"/> Top Performers
+                        </h3>
                     </div>
-                ) : (
-                    <div className="flex items-center justify-center h-full text-slate-500 text-sm">Waiting for champions...</div>
-                )}
-            </div>
 
-            {/* 📜 RIGHT: Scrollable List (Takes 30% width) */}
-            <div className="col-span-4 bg-[#0A0A0C] border border-white/5 rounded-3xl p-5 flex flex-col overflow-hidden">
-                <h3 className="text-xs font-bold text-slate-500 uppercase mb-4 tracking-widest flex items-center gap-2 shrink-0">
-                    <Users size={14}/> Leaderboard
-                </h3>
-                
-                <div className="overflow-y-auto pr-1 space-y-2 custom-scrollbar flex-1">
-                    {leaderboard.map((agent, index) => (
-                        <div key={agent._id} className={`flex items-center justify-between p-3 rounded-xl border transition-all ${index < 3 ? 'bg-indigo-500/10 border-indigo-500/30' : 'bg-[#0F0F12] border-white/5'}`}>
-                            <div className="flex items-center gap-3">
-                                <span className={`font-bold text-xs w-4 ${index < 3 ? 'text-indigo-400' : 'text-slate-600'}`}>#{index + 1}</span>
-                                <span className="text-slate-200 text-xs font-medium truncate max-w-[80px]">{agent.name}</span>
-                            </div>
-                            <span className="font-mono text-[10px] font-bold bg-[#0A0A0C] px-2 py-0.5 rounded border border-white/5 text-slate-300">{agent.wins} Wins</span>
+                    {leaderboard.length > 0 ? (
+                        <div className="flex flex-wrap justify-center items-end gap-8 px-6 mb-4">
+                            {/* 🥈 Rank 2 */}
+                            {top3[1] && (
+                                <div className="flex flex-col items-center animate-in slide-in-from-bottom-12 duration-700 delay-100">
+                                    <div className="w-16 h-16 rounded-full border-4 border-slate-400 bg-[#0F0F12] flex items-center justify-center text-xl font-bold text-white mb-3 relative shadow-[0_0_20px_rgba(148,163,184,0.3)]">
+                                        {top3[1].name.charAt(0)}
+                                        <div className="absolute -bottom-2.5 bg-slate-400 text-black text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#0A0A0C]">#2</div>
+                                    </div>
+                                    <div className="h-24 w-20 bg-gradient-to-t from-slate-400/20 to-transparent border-t-2 border-slate-400 rounded-t-lg flex flex-col items-center justify-start pt-3">
+                                        <span className="font-bold text-white text-xs">{top3[1].name}</span>
+                                        <span className="text-[10px] text-slate-400 font-mono">{top3[1].wins} Wins</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 🥇 Rank 1 */}
+                            {top3[0] && (
+                                <div className="flex flex-col items-center z-10 animate-in slide-in-from-bottom-12 duration-700">
+                                    <Crown size={32} className="text-yellow-400 mb-2 fill-yellow-400 animate-bounce" />
+                                    <div className="w-24 h-24 rounded-full border-4 border-yellow-400 bg-[#0F0F12] flex items-center justify-center text-3xl font-bold text-white mb-3 relative shadow-[0_0_30px_rgba(250,204,21,0.4)]">
+                                        {top3[0].name.charAt(0)}
+                                        <div className="absolute -bottom-3 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-[#0A0A0C]">#1</div>
+                                    </div>
+                                    <div className="h-36 w-28 bg-gradient-to-t from-yellow-400/20 to-transparent border-t-2 border-yellow-400 rounded-t-lg flex flex-col items-center justify-start pt-5 shadow-[0_0_20px_rgba(250,204,21,0.1)]">
+                                        <span className="font-bold text-white text-sm">{top3[0].name}</span>
+                                        <span className="text-xs text-yellow-200 font-mono font-bold">{top3[0].wins} Wins</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 🥉 Rank 3 */}
+                            {top3[2] && (
+                                <div className="flex flex-col items-center animate-in slide-in-from-bottom-12 duration-700 delay-200">
+                                    <div className="w-16 h-16 rounded-full border-4 border-amber-600 bg-[#0F0F12] flex items-center justify-center text-xl font-bold text-white mb-3 relative shadow-[0_0_20px_rgba(217,119,6,0.3)]">
+                                        {top3[2].name.charAt(0)}
+                                        <div className="absolute -bottom-2.5 bg-amber-600 text-black text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#0A0A0C]">#3</div>
+                                    </div>
+                                    <div className="h-16 w-20 bg-gradient-to-t from-amber-600/20 to-transparent border-t-2 border-amber-600 rounded-t-lg flex flex-col items-center justify-start pt-3">
+                                        <span className="font-bold text-white text-xs">{top3[2].name}</span>
+                                        <span className="text-[10px] text-slate-400 font-mono">{top3[2].wins} Wins</span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    ))}
-                    {leaderboard.length === 0 && <p className="text-xs text-slate-500 text-center py-4">No data yet.</p>}
+                    ) : (
+                        <div className="flex items-center justify-center h-full text-slate-500 text-sm">Waiting for champions...</div>
+                    )}
                 </div>
-            </div>
 
+                {/* 📜 RIGHT: Scrollable List */}
+                <div className="col-span-4 bg-[#0A0A0C] border border-white/5 rounded-3xl p-5 flex flex-col overflow-hidden">
+                    <h3 className="text-xs font-bold text-slate-500 uppercase mb-4 tracking-widest flex items-center gap-2 shrink-0">
+                        <Users size={14}/> Leaderboard
+                    </h3>
+                    
+                    <div className="overflow-y-auto pr-1 space-y-2 custom-scrollbar flex-1">
+                        {leaderboard.map((agent, index) => (
+                            <div key={agent._id} className={`flex items-center justify-between p-3 rounded-xl border transition-all ${index < 3 ? 'bg-indigo-500/10 border-indigo-500/30' : 'bg-[#0F0F12] border-white/5'}`}>
+                                <div className="flex items-center gap-3">
+                                    <span className={`font-bold text-xs w-4 ${index < 3 ? 'text-indigo-400' : 'text-slate-600'}`}>#{index + 1}</span>
+                                    <span className="text-slate-200 text-xs font-medium truncate max-w-[80px]">{agent.name}</span>
+                                </div>
+                                <span className="font-mono text-[10px] font-bold bg-[#0A0A0C] px-2 py-0.5 rounded border border-white/5 text-slate-300">{agent.wins} Wins</span>
+                            </div>
+                        ))}
+                        {leaderboard.length === 0 && <p className="text-xs text-slate-500 text-center py-4">No data yet.</p>}
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </div>
-);
+    );
 }
 
 // ================= 2. USER GAMIFICATION (XP & Badges) =================
@@ -237,39 +269,68 @@ function UserGamification({ user }) {
     useEffect(() => {
         const calculateLevel = async () => {
             const userId = user?._id || user?.id;
-            if (!userId) return;
+            if (!userId) { setLoading(false); return; }
 
             try {
                 const res = await api.get("/leads");
-                const myWonDeals = res.data.filter(l => {
+                const allLeads = res.data;
+                const myWonDeals = allLeads.filter(l => {
                     const leadAgentId = l.assignedTo?._id || l.assignedTo?.id || l.assignedTo;
                     return leadAgentId === userId && l.status === 'Closed';
                 }).length;
 
-                // Simple XP Logic: 1 Deal = 100 XP. Level Up every 500 XP.
                 const xp = myWonDeals * 100;
                 const level = Math.floor(xp / 500) + 1;
                 setStats({ won: myWonDeals, xp, level });
-            } catch (error) { console.error(error); } 
-            finally { setLoading(false); }
+            } catch (error) { 
+                console.error("Gamification Error:", error); 
+            } finally { 
+                setLoading(false); 
+            }
         };
         if (user) calculateLevel();
     }, [user]);
 
-    if (loading) return <div className="p-10 text-center text-slate-500"><Loader2 className="animate-spin mx-auto mb-2"/> Syncing Progress...</div>;
+    // ✨ 3. CYBER LOADING STATE (User View)
+    if (loading) return (
+        <div className="space-y-8 relative overflow-hidden min-h-[500px] font-mono">
+             {/* Matrix Background */}
+             <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+             {/* Scanner Light */}
+             <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.8)] animate-[scanline_2.5s_linear_infinite] z-50"></div>
+             <style>{`@keyframes scanline { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }`}</style>
 
-    const nextLevelXp = stats.level * 500;
+             {/* Level Card Skeleton */}
+             <div className="h-64 w-full bg-[#0A0A0C] border border-cyan-900/30 rounded-3xl p-8 flex items-center gap-10 relative z-10 shadow-lg">
+                 <div className="w-28 h-28 rounded-full bg-cyan-900/10 border border-cyan-500/20 animate-pulse shrink-0"></div>
+                 <div className="flex-1 space-y-4">
+                     <div className="h-8 w-48 bg-cyan-900/20 rounded animate-pulse"></div>
+                     <div className="h-4 w-full bg-cyan-900/10 rounded animate-pulse"></div>
+                 </div>
+             </div>
+
+             {/* Badges Skeleton */}
+             <div className="bg-[#0A0A0C] border border-cyan-900/30 rounded-3xl p-8 relative z-10 shadow-lg">
+                 <div className="h-6 w-32 bg-cyan-900/20 rounded mb-6 animate-pulse"></div>
+                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                     {[1,2,3,4].map(i => <div key={i} className="h-40 bg-cyan-900/5 border border-cyan-500/10 rounded-2xl animate-pulse"></div>)}
+                 </div>
+             </div>
+        </div>
+    );
+
+    const xpForNextLevel = 500; 
     const currentLevelBaseXp = (stats.level - 1) * 500;
-    const progressPercent = Math.min(((stats.xp - currentLevelBaseXp) / 500) * 100, 100);
+    const xpInCurrentLevel = stats.xp - currentLevelBaseXp;
+    const progressPercent = Math.min((xpInCurrentLevel / xpForNextLevel) * 100, 100);
 
     return (
-        <div className="space-y-8">
-            {/* Level Card with Neon Glow */}
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Level Card */}
             <div className="bg-gradient-to-r from-[#0F0F12] to-[#0A0A0C] border border-white/10 rounded-3xl p-8 relative overflow-hidden shadow-2xl group">
                 <div className="absolute top-0 right-0 p-32 bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none"></div>
                 
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
-                    {/* Badge Icon */}
                     <div className="relative">
                         <div className="w-28 h-28 rounded-full bg-[#050505] border-4 border-indigo-500 flex items-center justify-center text-5xl shadow-[0_0_30px_rgba(99,102,241,0.3)] animate-in zoom-in duration-500">
                             {stats.level >= 10 ? '👑' : stats.level >= 5 ? '⭐' : '🚀'}
@@ -287,14 +348,13 @@ function UserGamification({ user }) {
                             </div>
                             <div className="text-right">
                                 <span className="text-2xl font-bold text-indigo-400">{stats.xp}</span>
-                                <span className="text-xs text-slate-500 font-bold uppercase ml-1">XP</span>
+                                <span className="text-xs text-slate-500 font-bold uppercase ml-1">Total XP</span>
                             </div>
                         </div>
                         
-                        {/* XP Progress Bar */}
                         <div className="h-4 w-full bg-slate-800 rounded-full overflow-hidden border border-white/5 relative">
                             <div 
-                                className="h-full bg-gradient-to-r from-indigo-600 to-purple-500 transition-all duration-1000 ease-out relative" 
+                                className="h-full bg-gradient-to-r from-indigo-600 to-purple-500 transition-all duration-1000 ease-out relative shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
                                 style={{ width: `${progressPercent}%` }}
                             >
                                 <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]"></div>
@@ -302,8 +362,8 @@ function UserGamification({ user }) {
                         </div>
                         
                         <div className="flex justify-between text-[10px] font-bold uppercase text-slate-500 mt-2">
-                            <span>Level {stats.level}</span>
-                            <span>{500 - (stats.xp % 500)} XP to Level {stats.level + 1}</span>
+                            <span>Level {stats.level} ({currentLevelBaseXp} XP)</span>
+                            <span>Level {stats.level + 1} ({currentLevelBaseXp + 500} XP)</span>
                         </div>
                     </div>
                 </div>

@@ -414,19 +414,120 @@ const ActionButton = ({ icon, label, color, href }) => {
 };
 
 const HomeSkeleton = () => (
-    <div className="min-h-screen bg-[#030303] p-8 space-y-8">
-        <div className="flex justify-between items-center">
-             <div className="h-10 w-48 bg-[#0F0F12] rounded-xl animate-pulse"></div>
-             <div className="h-10 w-12 bg-[#0F0F12] rounded-full animate-pulse"></div>
+    <div className="min-h-screen bg-[#020202] p-8 space-y-8 relative overflow-hidden font-mono">
+        
+        {/* 1. MATRIX BACKGROUND PATTERN */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+
+        {/* ⚡ 2. TOP-TO-BOTTOM SCANNER LIGHT (Ye hai wo line jo chahiye thi) */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.8)] animate-[scanline_2.5s_linear_infinite] z-50"></div>
+        <style>{`@keyframes scanline { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }`}</style>
+
+        {/* --- NAVBAR SKELETON --- */}
+        <div className="flex justify-between items-center pb-6 border-b border-cyan-900/30 relative z-10">
+             <div className="flex items-center gap-4">
+                <div className="h-10 w-10 bg-cyan-950/30 border border-cyan-500/20 rounded-xl"></div>
+                <div className="space-y-2">
+                    <div className="h-4 w-32 bg-cyan-900/20 rounded"></div>
+                    <div className="h-2 w-20 bg-cyan-900/20 rounded"></div>
+                </div>
+             </div>
+             <div className="h-10 w-40 bg-cyan-950/30 border border-cyan-500/20 rounded-xl hidden md:block"></div>
         </div>
-        <div className="h-20 w-1/3 bg-[#0F0F12] rounded-2xl animate-pulse mb-8"></div>
-        <div className="grid grid-cols-4 gap-6">
-            {[1,2,3,4].map(i => <div key={i} className="h-32 bg-[#0F0F12] rounded-3xl animate-pulse"></div>)}
+
+        {/* --- WELCOME SECTION --- */}
+        <div className="flex justify-between items-end relative z-10 pt-2">
+             <div className="space-y-3 w-full max-w-lg">
+                <div className="h-10 w-3/4 bg-cyan-950/20 border-l-4 border-cyan-500 rounded-r-lg relative overflow-hidden">
+                     <div className="absolute inset-0 bg-cyan-500/10 animate-pulse"></div>
+                </div>
+                <div className="h-3 w-1/2 bg-cyan-900/20 rounded"></div>
+             </div>
+             <div className="h-10 w-32 bg-cyan-950/30 border border-cyan-500/20 rounded-xl"></div>
         </div>
-        <div className="grid grid-cols-3 gap-6 h-[300px]">
-            <div className="col-span-2 bg-[#0F0F12] rounded-3xl animate-pulse"></div>
-            <div className="bg-[#0F0F12] rounded-3xl animate-pulse"></div>
+
+        {/* --- GRID ROW 1: STATS & CHARTS --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+            
+            {/* Col 1: 4 Stat Cards (2x2 Grid match kiya hai) */}
+            <div className="grid grid-cols-2 gap-4 lg:col-span-1">
+                {[1,2,3,4].map(i => (
+                    <div key={i} className="h-32 bg-[#050505] border border-cyan-800/30 rounded-3xl p-5 flex flex-col justify-between relative overflow-hidden">
+                        <div className="h-8 w-8 bg-cyan-900/20 rounded-xl border border-cyan-500/20"></div>
+                        <div className="space-y-2">
+                            <div className="h-6 w-16 bg-cyan-900/30 rounded"></div>
+                            <div className="h-2 w-12 bg-cyan-900/20 rounded"></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Col 2: Bar Chart Placeholder */}
+            <div className="lg:col-span-1 bg-[#050505] border border-cyan-800/30 rounded-3xl p-6 relative flex flex-col">
+                 <div className="h-4 w-32 bg-cyan-900/20 rounded mb-8 border-l-2 border-cyan-500"></div>
+                 <div className="flex items-end justify-between flex-1 gap-2 px-2 border-b border-l border-cyan-900/30 pb-2 pl-2">
+                    {[40, 70, 50, 80, 60].map((h,i) => (
+                        <div key={i} className="w-full bg-cyan-500/10 border-t border-cyan-500/30 relative" style={{height: `${h}%`}}></div>
+                    ))}
+                 </div>
+            </div>
+
+            {/* Col 3: Pie Chart Placeholder */}
+            <div className="lg:col-span-1 bg-[#050505] border border-cyan-800/30 rounded-3xl p-6 flex flex-col items-center justify-center relative">
+                 <div className="absolute top-6 left-6 h-4 w-32 bg-cyan-900/20 rounded border-l-2 border-cyan-500"></div>
+                 <div className="relative mt-4">
+                     <div className="h-40 w-40 rounded-full border-4 border-cyan-900/20 border-dashed animate-[spin_10s_linear_infinite]"></div>
+                     <div className="absolute inset-0 h-40 w-40 rounded-full border-t-4 border-cyan-500 animate-spin"></div>
+                 </div>
+                 <div className="mt-6 flex gap-3">
+                     <div className="h-2 w-8 bg-cyan-500/30 rounded-full"></div>
+                     <div className="h-2 w-8 bg-purple-500/30 rounded-full"></div>
+                 </div>
+            </div>
         </div>
+
+        {/* --- GRID ROW 2: LISTS --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10 h-[400px]">
+            
+            {/* Col 1-2: Action Required (Pending Leads) */}
+            <div className="lg:col-span-2 bg-[#050505] border border-cyan-800/30 rounded-3xl p-6 flex flex-col">
+                <div className="flex justify-between mb-6">
+                    <div className="h-5 w-40 bg-cyan-900/20 rounded border-l-2 border-amber-500"></div>
+                    <div className="h-5 w-20 bg-amber-500/10 rounded border border-amber-500/20"></div>
+                </div>
+                <div className="space-y-3">
+                    {[1,2,3,4].map(i => (
+                        <div key={i} className="h-16 w-full bg-cyan-950/10 border border-cyan-900/20 rounded-2xl flex items-center px-4 gap-4 relative overflow-hidden">
+                             <div className="h-10 w-10 bg-cyan-900/20 rounded-xl"></div>
+                             <div className="flex-1 space-y-2">
+                                 <div className="h-3 w-32 bg-cyan-900/20 rounded"></div>
+                                 <div className="h-2 w-20 bg-cyan-900/10 rounded"></div>
+                             </div>
+                             <div className="h-6 w-20 bg-cyan-900/10 rounded"></div>
+                             {/* Scanning Glitch Effect */}
+                             <div className="absolute inset-0 bg-cyan-500/5 -translate-x-full animate-[shimmer_2s_infinite]" style={{animationDelay: `${i * 0.2}s`}}></div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Col 3: Recent Wins */}
+            <div className="lg:col-span-1 bg-[#050505] border border-cyan-800/30 rounded-3xl p-6">
+                 <div className="h-5 w-32 bg-cyan-900/20 rounded mb-6 border-l-2 border-emerald-500"></div>
+                 <div className="space-y-3">
+                    {[1,2,3,4].map(i => (
+                        <div key={i} className="h-16 w-full bg-emerald-900/5 border border-emerald-500/10 rounded-2xl flex items-center px-4 gap-4">
+                             <div className="h-10 w-10 rounded-full bg-emerald-500/10 border border-emerald-500/20"></div>
+                             <div className="flex-1 space-y-2">
+                                 <div className="h-3 w-24 bg-emerald-900/20 rounded"></div>
+                                 <div className="h-2 w-16 bg-emerald-900/10 rounded"></div>
+                             </div>
+                        </div>
+                    ))}
+                 </div>
+            </div>
+        </div>
+
     </div>
 );
 
