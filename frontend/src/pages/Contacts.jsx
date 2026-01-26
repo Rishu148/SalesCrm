@@ -38,8 +38,8 @@ const Toast = ({ message, type, onClose }) => {
   return (
     <div
       className={`fixed bottom-6 right-6 z-[120] flex items-center gap-3 px-5 py-3.5 rounded-xl border shadow-2xl backdrop-blur-xl animate-in slide-in-from-right-10 duration-300 ${type === "success"
-          ? "bg-[#0A0A0C]/95 border-emerald-500/20 text-emerald-400"
-          : "bg-[#0A0A0C]/95 border-rose-500/20 text-rose-400"
+        ? "bg-[#0A0A0C]/95 border-emerald-500/20 text-emerald-400"
+        : "bg-[#0A0A0C]/95 border-rose-500/20 text-rose-400"
         }`}
     >
       <div
@@ -61,11 +61,11 @@ const SmoothCheckbox = ({ checked, onChange, disabled }) => (
       onChange();
     }}
     className={`w-4 h-4 rounded border flex items-center justify-center transition-all duration-200 ${disabled
-        ? "bg-slate-900 border-slate-700 cursor-not-allowed opacity-30"
-        : "cursor-pointer " +
-        (checked
-          ? "bg-indigo-600 border-indigo-600 shadow-[0_0_10px_rgba(79,70,229,0.4)]"
-          : "bg-transparent border-slate-600 hover:border-slate-400")
+      ? "bg-slate-900 border-slate-700 cursor-not-allowed opacity-30"
+      : "cursor-pointer " +
+      (checked
+        ? "bg-indigo-600 border-indigo-600 shadow-[0_0_10px_rgba(79,70,229,0.4)]"
+        : "bg-transparent border-slate-600 hover:border-slate-400")
       }`}
   >
     {!disabled && (
@@ -315,8 +315,14 @@ const Contacts = () => {
     (l) => !l.assignedTo && l.status !== "Closed",
   ).length;
   const getInitials = (name) => (name ? name.charAt(0).toUpperCase() : "?");
-  const getSelectableLeads = () =>
-    filteredLeads.filter((l) => l.status !== "Closed");
+
+  const getSelectableLeads = () => filteredLeads;
+
+  // Check karo ki kya koi bhi selected lead "Closed" status wali hai
+  const hasClosedLeadSelected = selectedLeads.some((id) => {
+    const lead = leads.find((l) => l._id === id);
+    return lead && lead.status === "Closed";
+  });
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -446,6 +452,7 @@ const Contacts = () => {
                 <option value="Contacted">Contacted</option>
                 <option value="Interested">Interested</option>
                 <option value="Closed">Closed</option>
+                <option value="Lost">Lost</option>
               </select>
               <ChevronDown
                 size={14}
@@ -456,7 +463,7 @@ const Contacts = () => {
         </div>
 
         {/* TABLE */}
-        <div className="bg-[#0A0A0C]/60 border border-white/5 rounded-xl overflow-hidden shadow-sm relative z-0">
+        <div className="bg-[#0A0A0C]/60 border border-white/5 rounded-xl overflow-hidden shadow-sm relative z-0 ">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm border-collapse">
               <thead>
@@ -525,10 +532,10 @@ const Contacts = () => {
                           setSelectedLeadForModal(lead);
                         }}
                         className={`group transition-all duration-200 border-l-[3px] ${isClosed
-                            ? "bg-emerald-500/5 border-l-emerald-500/50 cursor-pointer"
-                            : isSelected
-                              ? "bg-indigo-500/10 border-l-indigo-500 cursor-pointer"
-                              : "border-l-transparent hover:bg-white/[0.02] hover:border-l-indigo-500/50 cursor-pointer"
+                          ? "bg-emerald-500/5 border-l-emerald-500/50 cursor-pointer"
+                          : isSelected
+                            ? "bg-indigo-500/10 border-l-indigo-500 cursor-pointer"
+                            : "border-l-transparent hover:bg-white/[0.02] hover:border-l-indigo-500/50 cursor-pointer"
                           }`}
                       >
                         {user?.role === "admin" && (
@@ -537,7 +544,6 @@ const Contacts = () => {
                               <SmoothCheckbox
                                 checked={isSelected}
                                 onChange={() => toggleRowSelection(lead._id)}
-                                disabled={isClosed}
                               />
                             </div>
                           </td>
@@ -545,7 +551,7 @@ const Contacts = () => {
                         <td
                           className="px-6 py-4 cursor-pointer"
                           onClick={(e) => {
-                            if (user?.role === "admin" && !isClosed) {
+                            if (user?.role === "admin") {
                               e.stopPropagation();
                               toggleRowSelection(lead._id);
                             }
@@ -659,13 +665,16 @@ const Contacts = () => {
             {selectedLeads.length} selected
           </span>
           <div className="h-6 w-[1px] bg-white/10"></div>
-          <button
-            onClick={() => setShowAssignModal(true)}
-            className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-200 transition-all active:scale-95 shadow-lg cursor-pointer"
-          >
-            {isReassigning ? <RefreshCw size={14} /> : <Users size={14} />}{" "}
-            {isReassigning ? "Reassign" : "Assign"}
-          </button>
+          {/* Agar koi Closed lead selected hai toh Assign button mat dikhao */}
+          {!hasClosedLeadSelected && (
+            <button
+              onClick={() => setShowAssignModal(true)}
+              className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-200 transition-all active:scale-95 shadow-lg cursor-pointer"
+            >
+              {isReassigning ? <RefreshCw size={14} /> : <Users size={14} />}
+              {isReassigning ? "Reassign" : "Assign"}
+            </button>
+          )}
           <button
             onClick={() => setShowDeleteModal(true)}
             className="text-rose-400 hover:text-rose-300 font-medium text-sm flex items-center gap-2 hover:bg-rose-500/10 px-3 py-2 rounded-lg transition-colors cursor-pointer"

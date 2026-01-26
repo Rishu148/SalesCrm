@@ -96,7 +96,7 @@ const LoadingScreen = memo(({ onComplete }) => {
 
       <div className="z-10 text-center space-y-2">
         <h2 className="text-2xl font-bold tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 animate-pulse">
-          SALES<span className="font-light text-white">CRM</span>
+          VORTEX<span className="font-light text-white">CRM</span>
         </h2>
         <p className="text-xs text-indigo-300 uppercase tracking-widest h-4">
           {progress >= 90 && authLoading
