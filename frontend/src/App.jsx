@@ -50,9 +50,7 @@ function App() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route
-            path="/"
-            element={<Navigate to={user ? (user.role === 'admin' ? "/dashboard" : "/home") : "/login"} replace />}
-          />
+            path="/"element={<Navigate to={user ? (user.role === 'admin' ? "/dashboard" : "/home") : "/login"} replace />}/>
           <Route path="/login" element={user ? <Navigate to={user.role === 'admin' ? "/dashboard" : "/home"} replace /> : <Login />} />
           <Route path="/register" element={user ? <Navigate to="/home" replace /> : <Register />} />
 
