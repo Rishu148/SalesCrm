@@ -15,8 +15,6 @@ import {
   CheckCircle2,
   Shield
 } from "lucide-react";
-
-// 👇 1. LOADER IMPORT (Path check kar lena)
 import LoadingScreen from "./pages/LoadingScreen"; 
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";

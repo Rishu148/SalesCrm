@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../api/axios";
 import { useAuth } from "../context/authContext";
-import {useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { 
   User, Shield, Trophy, Users, Save, LogOut, 
   LayoutGrid, CheckCircle, Lock, Plus, Trash2,

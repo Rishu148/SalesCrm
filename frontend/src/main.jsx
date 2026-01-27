@@ -1,13 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css"
+import App from "./App";
+import "./index.css";
 import { BrowserRouter } from "react-router-dom";
-
 import { GoogleOAuthProvider } from "@react-oauth/google";
-
 import axios from "axios";
-import { AuthProvider } from "./context/authContext.jsx";
+import { AuthProvider } from "./context/authContext";
 
 axios.defaults.withCredentials = true;
 
