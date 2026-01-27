@@ -21,6 +21,11 @@ const PageLoader = () => <div className="min-h-screen bg-[#030303]" />;
 
 function App() {
   const { loading: authLoading, user } = useAuth();
+  if (authLoading) {
+    return <div className="min-h-screen bg-[#030303]" />;
+  }
+  
+
   const [bootLoading, setBootLoading] = useState(
     () => !sessionStorage.getItem("boot_played"),
   );
@@ -40,9 +45,6 @@ function App() {
     return <LoadingScreen onComplete={handleAnimationComplete} />;
   }
 
-  if (authLoading) {
-    return <div className="min-h-screen bg-[#030303]" />;
-  }
 
   return (
     <div className="min-h-screen bg-[#030303] text-white">
