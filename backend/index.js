@@ -45,17 +45,19 @@ app.get("/check", (req, res) => {
 app.use(cookieParser());
 
 app.use(cors({
-  // Yahan apna Vercel ka link aur localhost dono daal do
   origin: [
     "http://localhost:5173", 
-    "https://sales-ftbt3fm1k-rishu148s-projects.vercel.app" // Tera Vercel URL
+    "https://sales-crm-frontend-puce.vercel.app" // 👈 Ye wala naya link dalo
   ],
-  credentials: true, // Cookies aur Auth headers ke liye ye zaroori hai
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+// ✨ Pre-flight requests (204 error) ko handle karne ke liye
 app.options('*', cors());
+
+
 
 
 
