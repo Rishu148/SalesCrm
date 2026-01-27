@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { useAuth } from "./context/authContext.jsx";
-import api from "./api/axios"; // 👈 Apna instance import kar
+import { useAuth } from "./context/authContext";
 import {
   Mail,
   Lock,
@@ -16,7 +15,9 @@ import {
   CheckCircle2,
   Shield
 } from "lucide-react";
-import LoadingScreen from "./pages/LoadingScreen.jsx"; 
+
+// 👇 1. LOADER IMPORT (Path check kar lena)
+import LoadingScreen from "./pages/LoadingScreen"; 
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
@@ -58,7 +59,7 @@ function Login() {
     setIsLoading(true);
     setError("");
     try {
-      const res = await axios.post("/auth/login", formData, { withCredentials: true });
+      const res = await axios.post(`${API_URL}/auth/login`, formData, { withCredentials: true });
       
       // 🚩 Ye line add kar: loginAction se pehle flag set karo
       sessionStorage.setItem("login_in_progress", "true"); 
