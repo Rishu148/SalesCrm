@@ -29,19 +29,6 @@ dotenv.config();
 connectDB();
 
 const app = express();
-
-// app.use(cors());
-app.use(express.json());
-
-
-
-app.get("/check", (req, res) => {
-  res.send("API working");
-});
-
-
-
-
 app.use(cookieParser());
 
 app.use(cors({
@@ -56,6 +43,19 @@ app.use(cors({
 
 // ✨ Pre-flight requests (204 error) ko handle karne ke liye
 app.options('*', cors());
+
+// app.use(cors());
+app.use(express.json());
+
+
+
+app.get("/check", (req, res) => {
+  res.send("API working");
+});
+
+
+
+
 
 
 
