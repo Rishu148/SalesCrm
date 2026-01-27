@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../context/authContext.jsx";
 import {
   PieChart,
   Pie,

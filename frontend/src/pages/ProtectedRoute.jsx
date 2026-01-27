@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../context/authContext.jsx";
 import { Loader2 } from "lucide-react";
 
 const ProtectedRoute = ({ allowedRoles }) => {

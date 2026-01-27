@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../api/axios";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../context/authContext.jsx";
 import { useLocation } from "react-router-dom";
 import { 
   User, Shield, Trophy, Users, Save, LogOut, 

@@ -1,7 +1,7 @@
-import Sidebar from "./sidebar";
+import Sidebar from "./sidebar.jsx";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../context/authContext";
-import CommandDesk from "../pages/CommandDesk"; 
+import { useAuth } from "../context/authContext.jsx";
+import CommandDesk from "../pages/CommandDesk.jsx"; 
 
 function AppLayout() {
   const { user } = useAuth();
