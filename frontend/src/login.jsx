@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import LoadingScreen from "./pages/LoadingScreen.jsx"; 
 
-// const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 function Login() {
   const navigate = useNavigate();
