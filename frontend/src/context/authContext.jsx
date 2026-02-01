@@ -7,39 +7,17 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // const fetchUser = async () => {
-  //   setLoading(true); 
-  //   try {
-  //     const res = await api.get("/auth/me");
-  //     setUser(res.data?.user || null);
-  //   } catch (err) {
-  //     setUser(null);
-  //   } finally {
-  //     setLoading(false); 
-  //   }
-  // };
-
-
   const fetchUser = async () => {
-  const isNewTab = !sessionStorage.getItem("tab_session_active");
-
-  setLoading(true);
-  try {
-    const res = await api.get("/auth/me");
-    
-    if (res.data?.user) {
-      if (isNewTab) {
-        setUser(null); // Force logout for new tab
-      } else {
-        setUser(res.data.user);
-      }
+    setLoading(true); 
+    try {
+      const res = await api.get("/auth/me");
+      setUser(res.data?.user || null);
+    } catch (err) {
+      setUser(null);
+    } finally {
+      setLoading(false); 
     }
-  } catch (err) {
-    setUser(null);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
   const loginAction = (userData) => {
